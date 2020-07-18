@@ -1,0 +1,41 @@
+{
+  "supported"     : { "image"         : "JPG|JPEG|PNG|GIF|BMP"
+                     ,"audio"         : "MP3|M4A|AAC|FLAC|OGG|OGA|WAV"
+                     ,"__INFO__"      : "you may adjust this value to support more/less types I have not thought about."
+                    }
+                    
+ ,"output"        : { "extension"     : { "to_use"               :  "mkv"
+                                         ,"__OPTIONAL__"         :  ["mkv", "mp4", "webm"]
+                                         ,"__INFO__"             :  "best to use mkv, it is new, supports a lot of media types and safer. mp4 is for compatibility. webm extension might require you to have audio not set to copy."
+                                        }
+                     ,"name"          : { "is_to_ascii_clean"    :  false
+                                         ,"is_to_append_date"    :  false
+                                         ,"is_to_append_time"    :  false
+                                         ,"is_to_append_random"  :  false
+                                         ,"__INFO__"             :  "name only: clean anything that it is not [a-z 0-9 dash underscore] (for example whitespace), which will be replaced with single underscore character. optionally append current data/time or 20-random-characters (cryptographically secure) generated, hex-range 0 to F."
+                                        }
+                    }
+ 
+ ,"encoding"      : { "video"         : { "to_use"               : "libx265"
+                                         ,"__OPTIONAL__"         : ["libx264", "libx265", "libvpx-vp9"]
+                                         ,"__INFO__"             : "mkv supports libx265/libx264/libvpx-vp9. mp4 supports libx265/libx264. webm supports libvpx-vp9."
+                                        }
+                     ,"audio"         : { "to_use"               : "copy"
+                                         ,"__OPTIONAL__"         : ["", "copy", "aac", "libmp3lame", "libopus", "libvorbis"]
+                                         ,"__INFO__"             : "choosing and empty string will delete the [-c:a ##ENCODER_AUDIO## ] part of the command-line template, and ffmpeg will choose audio encoding automatically according to the output extension (mkv/mp4 will auto-choose aac, webm will auto-choose libopus). it is best to keep using copy since audio encoding is not required. you may choose a specific audio encoder yourself."
+                                        }
+                    }
+
+ ,"command"       : { "launcher"      : "exe.exe" 
+                     ,"encoder"       : "ffmpeg.exe"
+                     ,"template"      : "-y -hide_banner -err_detect ignore_err -stats -threads 16 -loglevel info -strict experimental -flags -output_corrupt -fflags +autobsf+discardcorrupt -flags2 +ignorecrop -loop 1 -i \"##INPUT_IMAGE##\" -i \"##INPUT_AUDIO##\" -movflags +faststart+rtphint+dash+cmaf+empty_moov+frag_every_frame+frag_keyframe+separate_moof -zerolatency 1 -tune zerolatency -c:a ##ENCODER_AUDIO## -c:v ##ENCODER_VIDEO## -preset ultrafast -crf 30 -b:v 0 -row-mt 1 -shortest -vf fifo,format=pix_fmts=yuv420p,fps=fps=25 \"##OUTPUT_VIDEO##\""
+                     ,"__INFO__"      : "the execute (in the resource-folder) and its arguments. you may try avidemux/mkvtoolnix/handbrake and an alternative command-line template.  exe.exe is a wrap around Windows ShellExecuteW."
+                    }
+ 
+ ,"ABOUT"        : { "author"         : { "name_first"           : "Elad"
+                                         ,"name_last"            : "Karako"
+                                         ,"date"                 : "July, 2020"
+                                         ,"github_project"       : "https://github.com/eladkarako/audio_and_image_to_video/"
+                                         ,"download"             : "https://github.com/eladkarako/audio_and_image_to_video/archive/master.zip"
+                                        }
+}

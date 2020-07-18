@@ -1,44 +1,31 @@
-You drag&amp;drop two file over the <code>audio_and_image_to_video.cmd</code> batch-file,  
-it will identify which one is the image and which one is the audio.  
-an encoding process will start to encode the video.  
-
-Audio streams will be copied as is without encoding (saves time).  
-Output format is "the new MP4", <a href="https://trac.ffmpeg.org/wiki/Encode/H.265">H.265</a> with-in a <a href="https://en.wikipedia.org/wiki/Matroska">MKV-container</a> (which YouTube supports). 
-
-The process is done without working with the Windows CMD since it is very buggy when transferring a lot of information,  
-instead the logic was moved from <code>audio_and_image_to_video.cmd</code> to <code>resources/audio_and_image_to_video.js</code>.  
-
-NodeJS is very buggy and slow when piping all the console-output of FFMPEG.  
-FFMPEG also allows pressing <kbd>q</kbd> to quit encoding, this closes all the stdin pipes in a way that causes NodeJS to get-stuck.  
-
-So, instead,  
-NodeJS will actually run the ffmpeg command itself.  
-
-NodeJS pass the arguments to 'exe' - a .Net v2 (minimum support require, runs on all OS and architectures) program,  
-that passes the program and arguments to ShellExecuteW, so it too does not create a subprocess.  
-
-ShellExecuteW is a native Windows method. It launches FFMPEG directly with all the arguments.  
-once it is done the console will close.  
+drag/drop two files over <code>audio_and_image_to_video.cmd</code>,  
+it will create a single image-slideshow video (<a href="https://trac.ffmpeg.org/wiki/Slideshow#Singleimage">https://trac.ffmpeg.org/wiki/Slideshow#Singleimage</a>).  
 
 <hr/>
 
-The NodeJS program will write information (such as file locations) to the console,  
-and the CMD will provide pause at the end.  
-
-You won't be able to see any errors from the actuall FFMPEG process since it does not run through CMD, but by itself, and once it stops it quits.  
-
-<hr/>
-
-You can try an image and audio from the <code>media_examples/</code> folder.  
-the size of the video is by the image-size (at 25FPS).  
+By default the audio will not be encoded,  
+and the output will have the extension <code>mkv</code>,  
+the video will be encoded with H.265 (<a href="https://trac.ffmpeg.org/wiki/Encode/H.265">https://trac.ffmpeg.org/wiki/Encode/H.265</a>).
 
 <hr/>
 
-The output file will contain the audio file name and the image file name,  
-inside the audio-file folder, with the extension <code>.mkv</code>.  
+Most of the settings are placed in the <code>resources/SETTINGS.json</code> file,  
+the settings in the json files are not optional,  
+they are part of the code that was put outside for an easier configuration.  
+
+<hr/>
+  
+the <code>__OPTIONAL__</code> and <code>__INFO__</code> entries <strong>are not actually functional or used</strong>,  
+they are there just help you understand, and provide information regarding what you can change  
+(if you are are familiar with ffmpeg you can probably use other values as well).  
+
+<hr/>
+
+about <code>launcher</code>, <code>encoder</code>, <code>template</code>:  
+in-order to prevent creating a child-process and avoid using batch files,  
+I am using an external program (<code>exe.exe</code>) to launch <code>ffmpeg.exe</code>.  
 
 <hr/>
 
 <a href="https://github.com/eladkarako/audio_and_image_to_video/archive/master.zip">Download the entire thing, including the binaries - <strong>Read to use!</strong></a>  
 <br/><a href="https://paypal.me/e1adkarak0/5"><em>buy me a coffee ☕︎</em></a>  
-
